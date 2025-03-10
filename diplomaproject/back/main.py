@@ -81,6 +81,7 @@ async def download_page(request: Request, file1: str, file2: str, _nocache: floa
     # Используем имя сервиса из Docker Compose
     # Получаем реальный IP-адрес или домен сервера
     base_url = str(request.base_url).rstrip("/")
+    home_url = base_url.replace("/api", "")
 
     # Генерируем ссылки для скачивания файлов
     copy1_url = f"{base_url}/api/files/{file1}?_nocache={_nocache}"
@@ -93,7 +94,7 @@ async def download_page(request: Request, file1: str, file2: str, _nocache: floa
         <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
-        <a href="{base_url}/index.html" class="home-link">🏠 Вернуться на главную</a>
+        <a href="{home_url}" class="home-link">🏠 Вернуться на главную</a>
         <div class="download-container">
             <h2>Файл успешно обработан!</h2> 
             <p><a class="download-link" href="{copy1_url}" download>Скачать {file1}</a></p>
