@@ -91,10 +91,10 @@ async def download_page(request: Request, file1: str, file2: str, _nocache: floa
     <html>
     <head>
         <title>Скачивание файлов</title>
-        <link rel="stylesheet" href="{base_url}/static/style.css">
+        <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
-        <a href="/static/style.css" class="home-link">🏠 Вернуться на главную</a>
+        <a href="{home_url}" class="home-link">🏠 Вернуться на главную</a>
         <div class="download-container">
             <h2>Файл успешно обработан!</h2> 
             <p><a class="download-link" href="{copy1_url}" download>Скачать {file1}</a></p>
