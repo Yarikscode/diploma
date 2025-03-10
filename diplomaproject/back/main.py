@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi import Request
 
 COPYFILES_DIR = "./copyfiles"
-STATIC_DIR = "./static"
+STATIC_DIR = "/static"
 
 # Логирование
 def write_log(message,type_message):
