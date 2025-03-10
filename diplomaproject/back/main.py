@@ -49,7 +49,7 @@ app.add_middleware(
 )
 
 # Скачиваем файлы на сервер
-@app.post("/files")
+@app.post("/api/files")
 async def upload_file(request: Request, file: UploadFile = File(...)):
     file_data = await file.read()
     filename = file.filename
@@ -80,7 +80,7 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
 app.mount("/static", StaticFiles(directory="static"), name="static") # маунт стилей
 
 # Страница скачивания файлов
-@app.get("/download", response_class=HTMLResponse)
+@app.get("/api/download", response_class=HTMLResponse)
 async def download_page(request: Request, file1: str, file2: str, _nocache: float = Query(default=None)):
     # Используем имя сервиса из Docker Compose
     # Получаем реальный IP-адрес или домен сервера
@@ -108,7 +108,7 @@ async def download_page(request: Request, file1: str, file2: str, _nocache: floa
     return HTMLResponse(content=html_content)
 
 # 🔹 Раздача файлов для скачивания
-@app.get("/files/{filename}")
+@app.get("/api/files/{filename}")
 async def get_file(filename: str):
     file_path = os.path.join(COPYFILES_DIR, filename)
     if not os.path.isfile(file_path):
