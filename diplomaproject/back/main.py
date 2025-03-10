@@ -33,7 +33,10 @@ create_folder(COPYFILES_DIR)
 app = FastAPI()
 # Разрешаем фронту взаимодействовать с бэком
 origins = [
-    "http://192.168.31.77:5500" # укажите ip:порт вашего фроненд сервера
+    "http://nginx",
+    "http://localhost",
+    "http://127.0.0.1",
+    "http://192.168.31.77"
 ]
 
 app.add_middleware(
@@ -73,10 +76,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static") # маун�
 # Страница скачивания файлов
 @app.get("/download", response_class=FileResponse)
 async def download_page(file1: str, file2: str, _nocache: float = Query(default=None)):
-    copy1_url = f"http://localhost:8000/files/{file1}?_nocache={_nocache}"
-    copy2_url = f"http://localhost:8000/files/{file2}?_nocache={_nocache}"
+    copy1_url = f"http://nginx/files/{file1}?_nocache={_nocache}"
+    copy2_url = f"http://nginx/files/{file2}?_nocache={_nocache}"
 
-# Не забудьте указать ваш фронтенд сервер в <a href
     html_content = f"""
     <html>
     <head>
@@ -84,7 +86,7 @@ async def download_page(file1: str, file2: str, _nocache: float = Query(default=
         <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
-        <a href="http://192.168.31.77:8000/index.html" class="home-link">🏠 Вернуться на главную</a>
+        <a href="http://nginx/index.html" class="home-link">🏠 Вернуться на главную</a>
         <div class="download-container">
             <h2>Файл успешно обработан!</h2> 
             <p><a class="download-link" href="{copy1_url}" download>Скачать {file1}</a></p>
