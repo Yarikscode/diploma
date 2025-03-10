@@ -12,7 +12,7 @@ services:
     build: ./front
     container_name: nginx_proxy
     ports:
-      - "5500:80"
+      - "80:80"
     networks:
       - app_network
     depends_on:
