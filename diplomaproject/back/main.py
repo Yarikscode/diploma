@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi import Request
 
 COPYFILES_DIR = "./copyfiles"
+STATIC_DIR = "/app/static"
 
 # Логирование
 def write_log(message,type_message):
@@ -45,6 +46,7 @@ app.add_middleware(
     allow_headers=["*"],  # Разрешаем все заголовки
 )
 
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 # Скачиваем файлы на сервер
 @app.post("/api/files")
 async def upload_file(request: Request, file: UploadFile = File(...)):
@@ -73,8 +75,6 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
 
     return JSONResponse(content={"download_url": download_url})
 
-app.mount("/static", StaticFiles(directory="static"), name="static") # маунт стилей
-
 # Страница скачивания файлов
 @app.get("/api/download", response_class=HTMLResponse)
 async def download_page(request: Request, file1: str, file2: str, _nocache: float = Query(default=None)):
@@ -91,7 +91,7 @@ async def download_page(request: Request, file1: str, file2: str, _nocache: floa
     <html>
     <head>
         <title>Скачивание файлов</title>
-        <link rel="stylesheet" href="/static/style.css">
+        <link rel="stylesheet" href="{base_url}/static/style.css">
     </head>
     <body>
         <a href="{home_url}" class="home-link">🏠 Вернуться на главную</a>
