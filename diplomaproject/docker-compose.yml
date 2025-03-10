@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./back
+    container_name: fastapi_app
+    networks:
+      - app_network
+    restart: "no"
+
+  nginx:
+    build: ./front
+    container_name: nginx_proxy
+    ports:
+      - "5500:80"
+    networks:
+      - app_network
+    depends_on:
+      - backend
+    restart: "no"
+
+networks:
+  app_network:
+    driver: bridge
