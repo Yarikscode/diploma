@@ -68,10 +68,11 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
         write_log(f"Error copying files: {type(e).__name__} - {e}", "ERROR")
         return JSONResponse(content={"error": "Ошибка при загрузке файла"}, status_code=500)
 
-    # Формируем ссылку с именем контейнера `nginx`, так как API проксируется через него
-    frontend_host = "http://nginx"
-    
-    download_url = f"{frontend_host}/api/download?file1=copy1{ext}&file2=copy2{ext}"
+    # Определяем, с какого хоста пришёл запрос (из внутренней или внешней сети)
+    client_host = request.headers.get("Host", "localhost")
+
+    # Формируем корректный URL для скачивания
+    download_url = f"http://{client_host}/api/download?file1=copy1{ext}&file2=copy2{ext}"
 
     return JSONResponse(content={"download_url": download_url})
 
@@ -82,9 +83,11 @@ app.mount("/static", StaticFiles(directory="static"), name="static") # маун�
 @app.get("/download", response_class=HTMLResponse)
 async def download_page(request: Request, file1: str, file2: str, _nocache: float = Query(default=None)):
     # Используем имя сервиса из Docker Compose
-    backend_host = "backend"  # Это имя контейнера в `docker-compose.yml`
-    copy1_url = f"http://{backend_host}:8000/files/{file1}?_nocache={_nocache}"
-    copy2_url = f"http://{backend_host}:8000/files/{file2}?_nocache={_nocache}"
+    # Получаем реальный IP-адрес или домен сервера
+    client_host = request.headers.get("Host", "localhost")
+
+    copy1_url = f"http://{client_host}/api/files/{file1}?_nocache={_nocache}"
+    copy2_url = f"http://{client_host}/api/files/{file2}?_nocache={_nocache}"
 
     html_content = f"""
     <html>
@@ -109,7 +112,7 @@ async def download_page(request: Request, file1: str, file2: str, _nocache: floa
 async def get_file(filename: str):
     file_path = os.path.join(COPYFILES_DIR, filename)
     if not os.path.isfile(file_path):
-        return {"error": "Файл не найден"}
+        return JSONResponse(content={"error": "Файл не найден"}, status_code=404)
 
     return FileResponse(
         file_path,
