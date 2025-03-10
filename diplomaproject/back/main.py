@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi import Request
 
 COPYFILES_DIR = "./copyfiles"
-STATIC_DIR = "/app/static"
+STATIC_DIR = "./static"
 
 # Логирование
 def write_log(message,type_message):
@@ -94,7 +94,7 @@ async def download_page(request: Request, file1: str, file2: str, _nocache: floa
         <link rel="stylesheet" href="{base_url}/static/style.css">
     </head>
     <body>
-        <a href="{home_url}" class="home-link">🏠 Вернуться на главную</a>
+        <a href="/static/style.css" class="home-link">🏠 Вернуться на главную</a>
         <div class="download-container">
             <h2>Файл успешно обработан!</h2> 
             <p><a class="download-link" href="{copy1_url}" download>Скачать {file1}</a></p>
