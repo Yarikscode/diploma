@@ -74,7 +74,7 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
     # Формируем корректный URL для скачивания
     download_url = f"{base_url}/api/download?file1=copy1{ext}&file2=copy2{ext}"
 
-    return JSONResponse(content={"download_url": download_url
+    return JSONResponse(content={"download_url": download_url})
 
 app.mount("/static", StaticFiles(directory="static"), name="static") # маунт стилей
 
