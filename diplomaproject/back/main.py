@@ -14,7 +14,7 @@ COPYFILES_DIR = "./copyfiles"
 def write_log(message,type_message):
     current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     out_message = f"{current_datetime} {type_message} {message}"
-    with open("./Log/diplomprojectlog.txt","a") as log:
+    with open("./log/diplomprojectlog.txt","a") as log:
         log.write(out_message + "\n")
     log.close()
 
