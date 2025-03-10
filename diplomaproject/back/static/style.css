@@ -1,0 +1,88 @@
+/* Основные стили */
+body {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to bottom, #e0f7fa, #ffffff);
+    font-family: 'Segoe UI', sans-serif;
+    color: #1f3c44;
+    text-align: center;
+}
+
+/* Заголовок */
+h2 {
+    font-size: 26px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Контейнер скачивания */
+.download-container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+/* Кнопки скачивания */
+.download-link {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    text-decoration: none;
+    background-color: #0078d4;
+    color: white;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.download-link:hover {
+    background-color: #005fa3;
+}
+
+/* Кнопка "Вернуться на главную" */
+.home-link {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    text-decoration: none;
+    background-color: #ff7043;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.home-link:hover {
+    background-color: #e64a19;
+}
+
+/* Для мобильных устройств */
+@media (max-width: 500px) {
+    .download-container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .download-link {
+        font-size: 16px;
+    }
+
+    .home-link {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+}
