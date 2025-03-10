@@ -34,10 +34,7 @@ create_folder(COPYFILES_DIR)
 app = FastAPI()
 # Разрешаем фронту взаимодействовать с бэком
 origins = [
-    "http://nginx",
-    "http://localhost",
-    "http://127.0.0.1",
-    "http://192.168.31.77"
+    "*",
 ]
 
 app.add_middleware(
