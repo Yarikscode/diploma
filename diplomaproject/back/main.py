@@ -14,7 +14,7 @@ COPYFILES_DIR = "./copyfiles"
 def write_log(message,type_message):
     current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     out_message = f"{current_datetime} {type_message} {message}"
-    with open("./Log/diplomprojectlog.txt","a") as log:
+    with open("./log/diplomprojectlog.txt","a") as log:
         log.write(out_message + "\n")
     log.close()
 
@@ -73,8 +73,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static") # маун�
 # Страница скачивания файлов
 @app.get("/download", response_class=FileResponse)
 async def download_page(file1: str, file2: str, _nocache: float = Query(default=None)):
-    copy1_url = f"http://localhost:8000/files/{file1}?_nocache={_nocache}"
-    copy2_url = f"http://localhost:8000/files/{file2}?_nocache={_nocache}"
+    copy1_url = f"http://192.168.31.77:8000/files/{file1}?_nocache={_nocache}"
+    copy2_url = f"http://192.168.31.77:8000/files/{file2}?_nocache={_nocache}"
 
 # Не забудьте указать ваш фронтенд сервер в <a href
     html_content = f"""
@@ -84,7 +84,7 @@ async def download_page(file1: str, file2: str, _nocache: float = Query(default=
         <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
-        <a href="http://192.168.31.77:8000/index.html" class="home-link">🏠 Вернуться на главную</a>
+        <a href="http://192.168.31.77:5500/index.html" class="home-link">🏠 Вернуться на главную</a>
         <div class="download-container">
             <h2>Файл успешно обработан!</h2> 
             <p><a class="download-link" href="{copy1_url}" download>Скачать {file1}</a></p>
