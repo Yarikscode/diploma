@@ -34,8 +34,13 @@ create_folder(COPYFILES_DIR)
 app = FastAPI()
 # Разрешаем фронту взаимодействовать с бэком
 origins = [
-    "http://192.168.31.77:5500" # укажите ip:порт вашего фроненд сервера
+    origins = [
+    "http://nginx",  # Фронтенд в Docker
+    "http://localhost",  # Локальный доступ
+    "http://127.0.0.1",  # Локальный доступ
+    "http://192.168.31.77"  # Внешний доступ
 ]
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -47,11 +52,10 @@ app.add_middleware(
 
 # Скачиваем файлы на сервер
 @app.post("/files")
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(request: Request, file: UploadFile = File(...)):
     file_data = await file.read()
     filename = file.filename
     base_name, ext = os.path.splitext(filename)
-
 
     file_path1 = os.path.join(COPYFILES_DIR, f"copy1{ext}")
     file_path2 = os.path.join(COPYFILES_DIR, f"copy2{ext}")
@@ -61,13 +65,17 @@ async def upload_file(file: UploadFile = File(...)):
             f.write(file_data)
         with open(file_path2, "wb") as f:
             f.write(file_data)
-        write_log(f"Files was copy: copy1{ext}, copy2{ext}", "INFO")
+        write_log(f"Files copied: copy1{ext}, copy2{ext}", "INFO")
     except Exception as e:
-        write_log(f"Error while files copy: {type(e).__name__} - {e}", "ERROR")
-        return {"error": "Ошибка при загрузке файла"}
+        write_log(f"Error copying files: {type(e).__name__} - {e}", "ERROR")
+        return JSONResponse(content={"error": "Ошибка при загрузке файла"}, status_code=500)
 
-    # Возвращаем JSON с URL
-    return JSONResponse(content={"download_url": f"http://localhost:8000/download?file1=copy1{ext}&file2=copy2{ext}"})
+    # Динамически получаем правильный URL
+    base_url = str(request.base_url).rstrip("/")
+    download_url = f"{base_url}/download?file1=copy1{ext}&file2=copy2{ext}"
+
+    return JSONResponse(content={"download_url": download_url})
+
 
 app.mount("/static", StaticFiles(directory="static"), name="static") # маунт стилей
 
@@ -103,7 +111,7 @@ async def download_page(request: Request, file1: str, file2: str, _nocache: floa
 async def get_file(filename: str):
     file_path = os.path.join(COPYFILES_DIR, filename)
     if not os.path.isfile(file_path):
-        return {"error": "Файл не найден"}
+        return JSONResponse(content={"error": "Файл не найден"}, status_code=404)
 
     return FileResponse(
         file_path,
