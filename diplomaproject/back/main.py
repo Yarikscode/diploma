@@ -13,8 +13,18 @@ COPYFILES_DIR = "./copyfiles"
 STATIC_DIR = "/static"
 
 def get_base_url(request: Request) -> str:
-    host = request.headers.get("host", "localhost")  # Берем хост из заголовков (с учетом порта)
-    return f"http://{host}"
+    host_header = request.headers.get("host", "localhost")
+
+    if ":" in host_header:
+        return f"http://{host_header}"
+
+    forwarded_port = request.headers.get("X-Forwarded-Port")
+    
+    if forwarded_port and forwarded_port not in ["80", "443"]:
+        return f"http://{host_header}:{forwarded_port}"
+
+    return f"http://{host_header}" 
+
 
 # Логирование
 def write_log(message,type_message):
