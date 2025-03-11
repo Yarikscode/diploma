@@ -57,6 +57,10 @@ app.add_middleware(
     allow_headers=["*"],  # Разрешаем все заголовки
 )
 
+@app.get("/debug/headers")
+async def debug_headers(request: Request):
+    return dict(request.headers)
+    
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 # Скачиваем файлы на сервер
 @app.post("/api/files")
