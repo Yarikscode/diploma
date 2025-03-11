@@ -57,7 +57,7 @@ app.add_middleware(
     allow_headers=["*"],  # Разрешаем все заголовки
 )
 
-@app.get("api/debug/headers")
+@app.get("/api/debug/headers")
 async def debug_headers(request: Request):
     return JSONResponse(dict(request.headers))
     
