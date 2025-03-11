@@ -67,20 +67,25 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
         write_log(f"Error copying files: {type(e).__name__} - {e}", "ERROR")
         return JSONResponse(content={"error": "Ошибка при загрузке файла"}, status_code=500)
 
-    # Получаем корректный базовый URL (автоматически подставляется внешний IP или домен)
-    base_url = str(request.base_url).rstrip("/")
+    # Получаем хост и порт из запроса
+    host = request.url.hostname
+    port = request.url.port
+
+    # Если порт не то 80, добавляем его в URL
+    base_url = f"http://{host}" if port in [None, 80] else f"http://{host}:{port}"
 
     # Формируем корректный URL для скачивания
     download_url = f"{base_url}/api/download?file1=copy1{ext}&file2=copy2{ext}"
 
     return JSONResponse(content={"download_url": download_url})
 
-# Страница скачивания файлов
 @app.get("/api/download", response_class=HTMLResponse)
 async def download_page(request: Request, file1: str, file2: str, _nocache: float = Query(default=None)):
-    # Используем имя сервиса из Docker Compose
-    # Получаем реальный IP-адрес или домен сервера
-    base_url = str(request.base_url).rstrip("/")
+    host = request.url.hostname
+    port = request.url.port
+
+    # Если порт не 80, то добавляем его в URL
+    base_url = f"http://{host}" if port in [None, 80] else f"http://{host}:{port}"
     home_url = base_url.replace("/api", "")
 
     # Генерируем ссылки для скачивания файлов
@@ -91,7 +96,7 @@ async def download_page(request: Request, file1: str, file2: str, _nocache: floa
     <html>
     <head>
         <title>Скачивание файлов</title>
-        <link rel="stylesheet" href="/static/style.css">
+        <link rel="stylesheet" href="{base_url}/static/style.css">
     </head>
     <body>
         <a href="{home_url}" class="home-link">🏠 Вернуться на главную</a>
@@ -104,6 +109,7 @@ async def download_page(request: Request, file1: str, file2: str, _nocache: floa
     </html>
     """
     return HTMLResponse(content=html_content)
+
 
 # 🔹 Раздача файлов для скачивания
 @app.get("/api/files/{filename}")
