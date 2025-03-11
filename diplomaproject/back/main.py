@@ -13,17 +13,19 @@ COPYFILES_DIR = "./copyfiles"
 STATIC_DIR = "/static"
 
 def get_base_url(request: Request) -> str:
-    host_header = request.headers.get("host", "localhost")
+    host = request.headers.get("host", "localhost")
+    forwarded_port = request.headers.get("X-Forwarded-Port")  # Получаем порт от Nginx
 
-    if ":" in host_header:
-        return f"http://{host_header}"
+    # Если уже есть порт в Host, используем его
+    if ":" in host:
+        return f"http://{host}"
 
-    forwarded_port = request.headers.get("X-Forwarded-Port")
-    
+    # Если Nginx передал другой порт, добавляем его
     if forwarded_port and forwarded_port not in ["80", "443"]:
-        return f"http://{host_header}:{forwarded_port}"
+        return f"http://{host}:{forwarded_port}"
 
-    return f"http://{host_header}" 
+    return f"http://{host}"  # Если порт 80/443, возвращаем без него
+
 
 
 # Логирование
