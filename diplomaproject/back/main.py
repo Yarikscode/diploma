@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi import Request
 
 COPYFILES_DIR = "./copyfiles"
-STATIC_DIR = "/static"
+#STATIC_DIR = "/static"
 
 def get_base_url(request: Request) -> str:
     host = request.headers.get("X-Forwarded-Host", request.headers.get("host", "localhost"))
@@ -61,7 +61,7 @@ app.add_middleware(
 async def debug_headers(request: Request):
     return JSONResponse(dict(request.headers))
     
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+#app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 # Скачиваем файлы на сервер
 @app.post("/api/files")
 async def upload_file(request: Request, file: UploadFile = File(...)):
