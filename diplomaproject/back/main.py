@@ -12,6 +12,10 @@ from fastapi import Request
 COPYFILES_DIR = "./copyfiles"
 STATIC_DIR = "/static"
 
+def get_base_url(request: Request) -> str:
+    host = request.headers.get("host", "localhost")  # Берем хост из заголовков (с учетом порта)
+    return f"http://{host}"
+
 # Логирование
 def write_log(message,type_message):
     current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -67,12 +71,7 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
         write_log(f"Error copying files: {type(e).__name__} - {e}", "ERROR")
         return JSONResponse(content={"error": "Ошибка при загрузке файла"}, status_code=500)
 
-    # Получаем хост и порт из запроса
-    host = request.url.hostname
-    port = request.url.port
-
-    # Если порт не то 80, добавляем его в URL
-    base_url = f"http://{host}" if port in [None, 80] else f"http://{host}:{port}"
+    base_url = get_base_url(request)
 
     # Формируем корректный URL для скачивания
     download_url = f"{base_url}/api/download?file1=copy1{ext}&file2=copy2{ext}"
@@ -81,11 +80,7 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
 
 @app.get("/api/download", response_class=HTMLResponse)
 async def download_page(request: Request, file1: str, file2: str, _nocache: float = Query(default=None)):
-    host = request.url.hostname
-    port = request.url.port
-
-    # Если порт не 80, то добавляем его в URL
-    base_url = f"http://{host}" if port in [None, 80] else f"http://{host}:{port}"
+    base_url = get_base_url(request)
     home_url = base_url.replace("/api", "")
 
     # Генерируем ссылки для скачивания файлов
