@@ -57,7 +57,7 @@ app.add_middleware(
     allow_headers=["*"],  # Разрешаем все заголовки
 )
 
-@app.get("/debug/headers")
+@app.get("api/debug/headers")
 async def debug_headers(request: Request):
     return JSONResponse(dict(request.headers))
     
@@ -102,7 +102,7 @@ async def download_page(request: Request, file1: str, file2: str, _nocache: floa
     <html>
     <head>
         <title>Скачивание файлов</title>
-        <link rel="stylesheet" href="{base_url}/static/style.css">
+        <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
         <a href="{home_url}" class="home-link">🏠 Вернуться на главную</a>
